@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class OrderItem {
     @NotNull
-    private final UUID productsId;
+    private final UUID productId;
     @NotNull
     private final int quantity;
     @NotNull
