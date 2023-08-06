@@ -64,6 +64,10 @@ public class Payment extends AggregateRoot<PaymentId> {
         return createdAt;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+
     public static final class Builder {
         private PaymentId paymentId;
         private OrderId orderId;
@@ -75,9 +79,7 @@ public class Payment extends AggregateRoot<PaymentId> {
         private Builder() {
         }
 
-        public static Builder builder() {
-            return new Builder();
-        }
+
 
         public Builder paymentId(PaymentId val) {
             paymentId = val;
