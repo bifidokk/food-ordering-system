@@ -8,6 +8,9 @@ import com.food.ordering.system.payment.service.domain.entity.Payment;
 import com.food.ordering.system.payment.service.domain.event.PaymentEvent;
 import com.food.ordering.system.payment.service.domain.exception.PaymentApplicationServiceException;
 import com.food.ordering.system.payment.service.domain.mapper.PaymentsDataMapper;
+import com.food.ordering.system.payment.service.domain.ports.output.message.publisher.PaymentCancelledMessagePublisher;
+import com.food.ordering.system.payment.service.domain.ports.output.message.publisher.PaymentCompletedMessagePublisher;
+import com.food.ordering.system.payment.service.domain.ports.output.message.publisher.PaymentFailedMessagePublisher;
 import com.food.ordering.system.payment.service.domain.ports.output.repository.CreditEntryRepository;
 import com.food.ordering.system.payment.service.domain.ports.output.repository.CreditHistoryRepository;
 import com.food.ordering.system.payment.service.domain.ports.output.repository.PaymentRepository;
@@ -28,19 +31,29 @@ public class PaymentRequestHelper {
     private final PaymentRepository paymentRepository;
     private final CreditEntryRepository creditEntryRepository;
     private final CreditHistoryRepository creditHistoryRepository;
+    private final PaymentCompletedMessagePublisher paymentCompletedMessagePublisher;
+    private final PaymentCancelledMessagePublisher paymentCancelledMessagePublisher;
+
+    private final PaymentFailedMessagePublisher paymentFaileddMessagePublisher;
 
     public PaymentRequestHelper(
             PaymentDomainService paymentDomainService,
             PaymentsDataMapper paymentsDataMapper,
             PaymentRepository paymentRepository,
             CreditEntryRepository creditEntryRepository,
-            CreditHistoryRepository creditHistoryRepository
+            CreditHistoryRepository creditHistoryRepository,
+            PaymentCompletedMessagePublisher paymentCompletedMessagePublisher,
+            PaymentCancelledMessagePublisher paymentCancelledMessagePublisher,
+            PaymentFailedMessagePublisher paymentFaileddMessagePublisher
     ) {
         this.paymentDomainService = paymentDomainService;
         this.paymentsDataMapper = paymentsDataMapper;
         this.paymentRepository = paymentRepository;
         this.creditEntryRepository = creditEntryRepository;
         this.creditHistoryRepository = creditHistoryRepository;
+        this.paymentCompletedMessagePublisher = paymentCompletedMessagePublisher;
+        this.paymentCancelledMessagePublisher = paymentCancelledMessagePublisher;
+        this.paymentFaileddMessagePublisher = paymentFaileddMessagePublisher;
     }
 
     @Transactional
@@ -56,7 +69,9 @@ public class PaymentRequestHelper {
                 payment,
                 creditEntry,
                 creditHistories,
-                failureMessages
+                failureMessages,
+                paymentCompletedMessagePublisher,
+                paymentFaileddMessagePublisher
         );
 
         persistDBObjects(payment, creditEntry, creditHistories, failureMessages);
@@ -85,7 +100,9 @@ public class PaymentRequestHelper {
                 payment,
                 creditEntry,
                 creditHistories,
-                failureMessages
+                failureMessages,
+                paymentCancelledMessagePublisher,
+                paymentFaileddMessagePublisher
         );
 
         persistDBObjects(payment, creditEntry, creditHistories, failureMessages);
